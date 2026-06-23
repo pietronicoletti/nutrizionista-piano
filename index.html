@@ -299,17 +299,11 @@
     color: var(--verde);
   }
   .food-item-details {
-    display: grid;
-    grid-template-rows: minmax(0, 0fr);
-    transition: grid-template-rows 0.25s ease;
+    max-height: 0;
     overflow: hidden;
-  }
-  .food-item.expanded .food-item-details {
-    grid-template-rows: minmax(0, 1fr);
+    transition: max-height 0.25s ease;
   }
   .food-item-details-inner {
-    min-height: 0;
-    overflow: hidden;
     display: flex;
     flex-wrap: wrap;
     gap: 16px;
@@ -389,6 +383,17 @@
     text-align: center;
     color: var(--grigio);
     padding: 40px 20px;
+  }
+  @media (max-width: 640px) {
+    .control-group {
+      flex-direction: row;
+      align-items: center;
+      gap: 10px;
+    }
+    .day-summary-left .stat-kcal,
+    .food-item-details-inner .v-kcal {
+      flex: 1 1 100%;
+    }
   }
 </style>
 </head>
@@ -808,7 +813,9 @@ function renderGiorno() {
         </div>
       `;
       item.querySelector(".food-item-row").addEventListener("click", () => {
-        item.classList.toggle("expanded");
+        const details = item.querySelector(".food-item-details");
+        const isExpanded = item.classList.toggle("expanded");
+        details.style.maxHeight = isExpanded ? details.scrollHeight + "px" : "0px";
       });
       list.appendChild(item);
     });
