@@ -78,6 +78,22 @@
     font-weight: 700;
     color: var(--testo);
   }
+  .logout-btn {
+    border: 1.5px solid #e2e8f0;
+    background: white;
+    border-radius: 999px;
+    padding: 9px 16px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    font-family: inherit;
+    color: var(--grigio);
+    cursor: pointer;
+    transition: all 0.18s ease;
+  }
+  .logout-btn:hover {
+    border-color: var(--rosso);
+    color: var(--rosso);
+  }
   .view-tabs {
     display: flex;
     gap: 8px;
@@ -615,6 +631,7 @@
       <button class="view-tab-btn" id="tabSpesa">Spesa settimanale</button>
       <button class="view-tab-btn" id="tabRicette">Ricette</button>
     </div>
+    <button class="logout-btn" id="logoutBtn">Esci</button>
   </div>
 
   <div id="vistaGiorno">
@@ -1261,6 +1278,17 @@ function mostraContenutoPrincipale() {
   document.getElementById("loginGate").style.display = "none";
   document.getElementById("mainContent").style.display = "block";
 }
+
+function effettuaLogout() {
+  localStorage.removeItem(LOGIN_STORAGE_KEY);
+  document.getElementById("loginUsername").value = "";
+  document.getElementById("loginPassword").value = "";
+  document.getElementById("loginError").style.display = "none";
+  document.getElementById("mainContent").style.display = "none";
+  document.getElementById("loginGate").style.display = "flex";
+}
+
+document.getElementById("logoutBtn").addEventListener("click", effettuaLogout);
 
 document.getElementById("loginForm").addEventListener("submit", async (e) => {
   e.preventDefault();
