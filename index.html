@@ -530,6 +530,74 @@
     margin: 10px 0;
   }
   .recipe-ref-ingredients span b { color: var(--testo); font-weight: 700; }
+  .login-gate {
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(circle at 8% -8%, rgba(22,163,74,0.25), transparent 42%),
+      radial-gradient(circle at 95% 0%, rgba(249,115,22,0.15), transparent 38%),
+      linear-gradient(135deg, #0f7a38 0%, #0c4a6e 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 1000;
+  }
+  .login-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--ombra-hover);
+    padding: 36px 32px;
+    max-width: 360px;
+    width: 100%;
+    text-align: center;
+  }
+  .login-card h1 {
+    margin: 0 0 8px;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--testo);
+  }
+  .login-card p {
+    margin: 0 0 22px;
+    font-size: 0.88rem;
+    color: var(--grigio);
+  }
+  .login-card input {
+    width: 100%;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 11px 14px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    margin-bottom: 12px;
+    background: #f8fafc;
+    color: var(--testo);
+  }
+  .login-card input:focus {
+    outline: none;
+    border-color: var(--verde);
+  }
+  .login-card button {
+    width: 100%;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    font-family: inherit;
+    color: white;
+    background: linear-gradient(120deg, var(--verde), var(--teal));
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+  }
+  .login-card button:hover { opacity: 0.92; }
+  .login-error {
+    margin-top: 14px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #b91c1c;
+  }
   @media (max-width: 640px) {
     .control-group {
       flex-direction: row;
@@ -544,6 +612,21 @@
 </style>
 </head>
 <body>
+
+<div class="login-gate" id="loginGate">
+  <div class="login-card">
+    <h1>🔒 Accesso richiesto</h1>
+    <p>Inserisci username e password per vedere il piano alimentare.</p>
+    <form id="loginForm">
+      <input type="text" id="loginUsername" placeholder="Username" autocomplete="username">
+      <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password">
+      <button type="submit">Entra</button>
+      <div class="login-error" id="loginError" style="display:none;">Username o password non corretti.</div>
+    </form>
+  </div>
+</div>
+
+<div id="mainContent" style="display:none;">
 
 <header>
   <h1>Piano alimentare</h1>
@@ -578,6 +661,8 @@
   <div id="vistaRicette" style="display:none;">
     <div id="contenutoRicette"></div>
   </div>
+</div>
+
 </div>
 
 <script>
@@ -1208,6 +1293,39 @@ renderDayTabs();
 renderGiorno();
 renderSpesa();
 renderRicette();
+
+const LOGIN_USERNAME = "pietro";
+const LOGIN_PASSWORD_HASH = "d9f36c96f38058c8f4922ae7688b83dccf7c81adec2d71ca3804c2de51366a76";
+const LOGIN_STORAGE_KEY = "nutrizionista_login_ok";
+
+async function sha256Hex(testo) {
+  const buffer = new TextEncoder().encode(testo);
+  const digest = await crypto.subtle.digest("SHA-256", buffer);
+  return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
+function mostraContenutoPrincipale() {
+  document.getElementById("loginGate").style.display = "none";
+  document.getElementById("mainContent").style.display = "block";
+}
+
+document.getElementById("loginForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const username = document.getElementById("loginUsername").value.trim();
+  const password = document.getElementById("loginPassword").value;
+  const passwordHash = await sha256Hex(password);
+  if (username === LOGIN_USERNAME && passwordHash === LOGIN_PASSWORD_HASH) {
+    localStorage.setItem(LOGIN_STORAGE_KEY, "1");
+    mostraContenutoPrincipale();
+  } else {
+    document.getElementById("loginError").style.display = "block";
+    document.getElementById("loginPassword").value = "";
+  }
+});
+
+if (localStorage.getItem(LOGIN_STORAGE_KEY) === "1") {
+  mostraContenutoPrincipale();
+}
 </script>
 
 </body>
