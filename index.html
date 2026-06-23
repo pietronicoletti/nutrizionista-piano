@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Piano alimentare — Progetto Nutrizionista</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Cg%20transform='translate(32,32)%20rotate(-90)'%3E%3Ccircle%20r='24'%20fill='none'%20stroke='%2316a34a'%20stroke-width='10'%20stroke-dasharray='37.2%20113.6'/%3E%3Ccircle%20r='24'%20fill='none'%20stroke='%230ea5e9'%20stroke-width='10'%20stroke-dasharray='37.2%20113.6'%20stroke-dashoffset='-37.7'/%3E%3Ccircle%20r='24'%20fill='none'%20stroke='%23f97316'%20stroke-width='10'%20stroke-dasharray='37.2%20113.6'%20stroke-dashoffset='-75.4'/%3E%3Ccircle%20r='24'%20fill='none'%20stroke='%239333ea'%20stroke-width='10'%20stroke-dasharray='37.2%20113.6'%20stroke-dashoffset='-113.1'/%3E%3C/g%3E%3Ccircle%20cx='32'%20cy='32'%20r='13'%20fill='white'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -45,8 +46,18 @@
     border-radius: 0 0 28px 28px;
     box-shadow: 0 8px 30px rgba(22,163,74,0.25);
   }
-  header h1 {
+  .header-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
     margin: 0 0 8px;
+  }
+  .header-logo {
+    flex-shrink: 0;
+  }
+  header h1 {
+    margin: 0;
     font-size: 2.1rem;
     font-weight: 800;
     letter-spacing: -0.02em;
@@ -619,7 +630,18 @@
 <div id="mainContent" style="display:none;">
 
 <header>
-  <h1>Piano alimentare</h1>
+  <div class="header-title-row">
+    <svg class="header-logo" width="40" height="40" viewBox="0 0 64 64" aria-hidden="true">
+      <g transform="translate(32,32) rotate(-90)">
+        <circle r="24" fill="none" stroke="#ffffff" stroke-width="10" stroke-dasharray="37.2 113.6"/>
+        <circle r="24" fill="none" stroke="#bbf7d0" stroke-width="10" stroke-dasharray="37.2 113.6" stroke-dashoffset="-37.7"/>
+        <circle r="24" fill="none" stroke="#fed7aa" stroke-width="10" stroke-dasharray="37.2 113.6" stroke-dashoffset="-75.4"/>
+        <circle r="24" fill="none" stroke="#e9d5ff" stroke-width="10" stroke-dasharray="37.2 113.6" stroke-dashoffset="-113.1"/>
+      </g>
+      <circle cx="32" cy="32" r="13" fill="#0f7a38"/>
+    </svg>
+    <h1>Piano alimentare</h1>
+  </div>
   <p>Seleziona il giorno per vedere cosa mangiare, oppure passa alla sezione "Spesa" per la lista della spesa settimanale.</p>
 </header>
 
