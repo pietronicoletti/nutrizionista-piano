@@ -73,32 +73,11 @@
     gap: 16px;
     align-items: center;
   }
-  .control-group {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-  .control-group label {
-    font-size: 0.78rem;
-    color: var(--grigio);
+  .greeting {
+    font-size: 1.05rem;
     font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-  select {
-    border: 1.5px solid #e2e8f0;
-    border-radius: 10px;
-    padding: 9px 14px;
-    font-size: 0.95rem;
-    font-family: inherit;
-    font-weight: 600;
-    background: #f8fafc;
     color: var(--testo);
-    min-width: 160px;
-    cursor: pointer;
-    transition: border-color 0.15s ease;
   }
-  select:hover { border-color: var(--verde); }
   .view-tabs {
     display: flex;
     gap: 8px;
@@ -599,11 +578,6 @@
     color: #b91c1c;
   }
   @media (max-width: 640px) {
-    .control-group {
-      flex-direction: row;
-      align-items: center;
-      gap: 10px;
-    }
     .day-summary-left .stat-kcal,
     .food-item-details-inner .v-kcal {
       flex: 1 1 100%;
@@ -630,15 +604,12 @@
 
 <header>
   <h1>Piano alimentare</h1>
-  <p>Seleziona l'utente e il giorno per vedere cosa mangiare, oppure passa alla sezione "Spesa" per la lista della spesa settimanale.</p>
+  <p>Seleziona il giorno per vedere cosa mangiare, oppure passa alla sezione "Spesa" per la lista della spesa settimanale.</p>
 </header>
 
 <div class="container">
   <div class="controls-bar">
-    <div class="control-group">
-      <label for="selectUtente">Utente</label>
-      <select id="selectUtente"></select>
-    </div>
+    <div class="greeting">Ciao <span id="nomeUtenteSaluto"></span> 👋</div>
     <div class="view-tabs">
       <button class="view-tab-btn active" id="tabGiorno">Piano del giorno</button>
       <button class="view-tab-btn" id="tabSpesa">Spesa settimanale</button>
@@ -976,16 +947,8 @@ function fmt(n) {
   return (Math.round(n * 10) / 10).toString().replace(".", ",");
 }
 
-function popolaSelectUtenti() {
-  const select = document.getElementById("selectUtente");
-  select.innerHTML = "";
-  Object.keys(datiUtenti).forEach(key => {
-    const opt = document.createElement("option");
-    opt.value = key;
-    opt.textContent = datiUtenti[key].nomeVisualizzato;
-    select.appendChild(opt);
-  });
-  select.value = utenteCorrente;
+function mostraSaluto() {
+  document.getElementById("nomeUtenteSaluto").textContent = datiUtenti[utenteCorrente].nomeVisualizzato;
 }
 
 function renderDayTabs() {
@@ -1274,21 +1237,11 @@ function mostraVista(vista) {
   document.getElementById("tabRicette").classList.toggle("active", vista === "ricette");
 }
 
-document.getElementById("selectUtente").addEventListener("change", (e) => {
-  utenteCorrente = e.target.value;
-  giornoCorrente = calcolaGiornoCorrente();
-  ricettaApertaId = null;
-  renderDayTabs();
-  renderGiorno();
-  renderSpesa();
-  renderRicette();
-});
-
 document.getElementById("tabGiorno").addEventListener("click", () => mostraVista("giorno"));
 document.getElementById("tabSpesa").addEventListener("click", () => mostraVista("spesa"));
 document.getElementById("tabRicette").addEventListener("click", () => { ricettaApertaId = null; mostraVista("ricette"); renderRicette(); });
 
-popolaSelectUtenti();
+mostraSaluto();
 renderDayTabs();
 renderGiorno();
 renderSpesa();
