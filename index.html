@@ -279,6 +279,10 @@
   .food-item-name {
     font-weight: 600;
   }
+  .food-item-warning-icon {
+    margin-left: 6px;
+    font-size: 0.85rem;
+  }
   .food-item-right {
     display: flex;
     align-items: center;
@@ -384,6 +388,148 @@
     color: var(--grigio);
     padding: 40px 20px;
   }
+  .recipe-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--ombra);
+    margin-bottom: 16px;
+    padding: 18px 22px;
+    cursor: pointer;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+  .recipe-card:hover {
+    box-shadow: var(--ombra-hover);
+    transform: translateY(-2px);
+  }
+  .recipe-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .recipe-card-name {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--testo);
+  }
+  .recipe-category-badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--verde-scuro);
+    background: var(--verde-chiaro);
+    padding: 4px 10px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .recipe-card-macros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 12px;
+    font-size: 0.82rem;
+    color: var(--grigio);
+    font-weight: 600;
+  }
+  .recipe-card-macros b { font-size: 0.95rem; font-weight: 800; }
+  .recipe-card-macros .v-kcal b { color: var(--verde-scuro); }
+  .recipe-card-macros .v-p b { color: var(--teal); }
+  .recipe-card-macros .v-f b { color: var(--arancio); }
+  .recipe-card-macros .v-c b { color: var(--viola); }
+  .warning-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #fff1f0;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 5px 11px;
+    border-radius: 999px;
+    margin-top: 10px;
+  }
+  .warning-banner {
+    background: linear-gradient(120deg, #fff1f0, #fff7ed);
+    border: 1px solid #fecaca;
+    border-radius: 14px;
+    padding: 14px 18px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #991b1b;
+    margin-bottom: 20px;
+  }
+  .recipe-detail-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+  }
+  .back-btn {
+    border: 1.5px solid #e2e8f0;
+    background: white;
+    border-radius: 999px;
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--grigio);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .back-btn:hover { border-color: var(--verde); color: var(--verde-scuro); }
+  .recipe-detail-title {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--testo);
+    letter-spacing: -0.01em;
+  }
+  .recipe-steps {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--ombra);
+    padding: 8px 22px 18px;
+    margin-top: 18px;
+  }
+  .recipe-steps h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--verde-scuro);
+    margin: 16px 0 10px;
+  }
+  .recipe-steps ol {
+    margin: 0;
+    padding-left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .recipe-steps li {
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+  .recipe-ref-link {
+    display: inline-block;
+    margin-top: 4px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--teal);
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .recipe-ref-link:hover { text-decoration: underline; }
+  .recipe-ref-ingredients {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.82rem;
+    color: var(--grigio);
+    font-weight: 500;
+    margin: 10px 0;
+  }
+  .recipe-ref-ingredients span b { color: var(--testo); font-weight: 700; }
   @media (max-width: 640px) {
     .control-group {
       flex-direction: row;
@@ -413,6 +559,7 @@
     <div class="view-tabs">
       <button class="view-tab-btn active" id="tabGiorno">Piano del giorno</button>
       <button class="view-tab-btn" id="tabSpesa">Spesa settimanale</button>
+      <button class="view-tab-btn" id="tabRicette">Ricette</button>
     </div>
   </div>
 
@@ -427,6 +574,10 @@
     </div>
     <div id="contenutoSpesa"></div>
   </div>
+
+  <div id="vistaRicette" style="display:none;">
+    <div id="contenutoRicette"></div>
+  </div>
 </div>
 
 <script>
@@ -440,15 +591,79 @@ const datiUtenti = {
     nomeVisualizzato: "Pietro",
     target: { kcal: 1700, proteine: 150, grassi: 55, carboidrati: 155 },
     mediaSettimanale: { kcal: 1742, proteine: 141.5, grassi: 62.5, carboidrati: 152.5 },
+    rangePerPasto: {
+      "Colazione": { min: 250, max: 450 },
+      "Pranzo": { min: 500, max: 750 },
+      "Spuntino": { min: 150, max: 300 },
+      "Cena": { min: 400, max: 600 }
+    },
+    ricette: [
+      {
+        id: "uova-strapazzate-pomodori",
+        nome: "Uova strapazzate con pomodori",
+        categoria: "Colazione",
+        totale: { kcal: 379, proteine: 23.7, grassi: 22.9, carboidrati: 19 },
+        ingredienti: [
+          { alimento: "Uova", quantita: "3 (165 g)" },
+          { alimento: "Pane integrale", quantita: "30 g" },
+          { alimento: "Pomodori", quantita: "100 g" },
+          { alimento: "Olio EVO (cottura)", quantita: "5 g" }
+        ],
+        passaggi: [
+          "Tagliare i pomodori a cubetti.",
+          "Scaldare l'olio EVO in una padella antiaderente a fuoco medio.",
+          "Rompere le uova in una ciotola e sbatterle leggermente con una forchetta.",
+          "Versare le uova in padella e cuocere mescolando di continuo a fuoco medio-basso.",
+          "A metà cottura aggiungere i pomodori e continuare a mescolare finché le uova sono morbide ma cotte.",
+          "Servire con il pane integrale tostato a parte."
+        ]
+      },
+      {
+        id: "tacchino-forno-finocchi-patate",
+        nome: "Tacchino al forno con finocchi e patate",
+        categoria: "Cena",
+        totale: { kcal: 550, proteine: 55, grassi: 20.25, carboidrati: 39.5 },
+        ingredienti: [
+          { alimento: "Petto di tacchino", quantita: "200 g" },
+          { alimento: "Finocchi", quantita: "200 g" },
+          { alimento: "Patate", quantita: "150 g" },
+          { alimento: "Avocado", quantita: "50 g" },
+          { alimento: "Olio EVO", quantita: "10 g" }
+        ],
+        passaggi: [
+          "Tagliare le patate a tocchetti e i finocchi a spicchi.",
+          "Disporre patate e finocchi su una teglia da forno, condire con metà dell'olio EVO e infornare a 200°C per 15 minuti.",
+          "Condire il petto di tacchino con il resto dell'olio EVO e adagiarlo sulla stessa teglia.",
+          "Continuare la cottura in forno per altri 20-25 minuti, finché il tacchino è cotto e dorato e le verdure morbide.",
+          "Affettare l'avocado fresco e servirlo a fianco, senza cuocerlo."
+        ]
+      },
+      {
+        id: "pasta-carbonara",
+        nome: "Pasta alla carbonara",
+        categoria: "Pranzo",
+        totale: { kcal: 908, proteine: 45.4, grassi: 45.9, carboidrati: 73 },
+        ingredienti: [
+          { alimento: "Pasta (cruda)", quantita: "100 g" },
+          { alimento: "Guanciale/pancetta", quantita: "50 g" },
+          { alimento: "Uova", quantita: "2 (110 g)" },
+          { alimento: "Parmigiano/Grana", quantita: "30 g" }
+        ],
+        passaggi: [
+          "Cuocere la pasta in abbondante acqua salata.",
+          "Rosolare il guanciale/pancetta a fuoco basso in una padella, senza aggiungere altro grasso, finché diventa croccante.",
+          "In una ciotola sbattere le uova con il parmigiano grattugiato.",
+          "Scolare la pasta (conservando un po' di acqua di cottura) e versarla nella padella col guanciale, fuori dal fuoco.",
+          "Aggiungere il composto di uova e parmigiano, mescolando velocemente per creare una crema; allungare con un po' di acqua di cottura se risulta troppo densa."
+        ]
+      }
+    ],
     giorni: {
       "Lunedì": {
         totale: { kcal: 1703, proteine: 144, grassi: 60.5, carboidrati: 142.9 },
         pasti: [
           { nome: "Colazione", totale: { kcal: 379, proteine: 23.7, grassi: 22.9, carboidrati: 19 }, alimenti: [
-            { alimento: "Uova", quantita: "3 (165 g)", kcal: 234, proteine: 19.5, grassi: 16.5, carboidrati: 1.5 },
-            { alimento: "Pane integrale", quantita: "30 g", kcal: 75, proteine: 2.7, grassi: 1.1, carboidrati: 13.5 },
-            { alimento: "Pomodori", quantita: "100 g", kcal: 25, proteine: 1.5, grassi: 0.3, carboidrati: 4 },
-            { alimento: "Olio EVO (cottura)", quantita: "5 g", kcal: 45, proteine: 0, grassi: 5, carboidrati: 0 }
+            { tipo: "ricetta", ricettaId: "uova-strapazzate-pomodori", quantita: "1 porzione", kcal: 379, proteine: 23.7, grassi: 22.9, carboidrati: 19 }
           ]},
           { nome: "Pranzo", totale: { kcal: 684, proteine: 55.8, grassi: 15.3, carboidrati: 75.5 }, alimenti: [
             { alimento: "Petto di pollo", quantita: "200 g", kcal: 220, proteine: 46, grassi: 2.4, carboidrati: 0 },
@@ -596,11 +811,7 @@ const datiUtenti = {
             { alimento: "Mandarini", quantita: "150 g", kcal: 68, proteine: 1.2, grassi: 0.3, carboidrati: 15 }
           ]},
           { nome: "Cena", totale: { kcal: 550, proteine: 55, grassi: 20.25, carboidrati: 39.5 }, alimenti: [
-            { alimento: "Petto di tacchino", quantita: "200 g", kcal: 210, proteine: 48, grassi: 2, carboidrati: 0 },
-            { alimento: "Finocchi", quantita: "200 g", kcal: 50, proteine: 3, grassi: 0.6, carboidrati: 8 },
-            { alimento: "Patate", quantita: "150 g", kcal: 120, proteine: 3, grassi: 0.15, carboidrati: 27 },
-            { alimento: "Avocado", quantita: "50 g", kcal: 80, proteine: 1, grassi: 7.5, carboidrati: 4.5 },
-            { alimento: "Olio EVO", quantita: "10 g", kcal: 90, proteine: 0, grassi: 10, carboidrati: 0 }
+            { tipo: "ricetta", ricettaId: "tacchino-forno-finocchi-patate", quantita: "1 porzione", kcal: 550, proteine: 55, grassi: 20.25, carboidrati: 39.5 }
           ]}
         ]
       },
@@ -705,6 +916,29 @@ function calcolaGiornoCorrente() {
 let utenteCorrente = Object.keys(datiUtenti)[0];
 let giornoCorrente = calcolaGiornoCorrente();
 let vistaCorrente = "giorno";
+let ricettaApertaId = null;
+
+function trovaRicetta(utente, ricettaId) {
+  return (utente.ricette || []).find(r => r.id === ricettaId);
+}
+
+function valutaRicetta(ricetta, rangePerPasto) {
+  const motivi = [];
+  const range = rangePerPasto ? rangePerPasto[ricetta.categoria] : null;
+  if (range) {
+    if (ricetta.totale.kcal < range.min) {
+      motivi.push(`sotto il range ${ricetta.categoria.toLowerCase()} (${range.min}-${range.max} kcal)`);
+    }
+    if (ricetta.totale.kcal > range.max) {
+      motivi.push(`supera il range ${ricetta.categoria.toLowerCase()} (${range.min}-${range.max} kcal)`);
+    }
+  }
+  const percGrassi = ricetta.totale.kcal > 0 ? (ricetta.totale.grassi * 9 / ricetta.totale.kcal) * 100 : 0;
+  if (percGrassi > 40) {
+    motivi.push(`i grassi superano il 40% delle kcal totali (~${fmt(percGrassi)}%)`);
+  }
+  return { fuoriTarget: motivi.length > 0, motivi };
+}
 
 function fmt(n) {
   return (Math.round(n * 10) / 10).toString().replace(".", ",");
@@ -752,10 +986,11 @@ function renderGiorno() {
   const elencoGiorno = new Map();
   giorno.pasti.forEach(pasto => {
     pasto.alimenti.forEach(a => {
-      if (elencoGiorno.has(a.alimento)) {
-        elencoGiorno.get(a.alimento).push(a.quantita);
+      const nome = a.tipo === "ricetta" ? (trovaRicetta(utente, a.ricettaId) || { nome: a.ricettaId }).nome : a.alimento;
+      if (elencoGiorno.has(nome)) {
+        elencoGiorno.get(nome).push(a.quantita);
       } else {
-        elencoGiorno.set(a.alimento, [a.quantita]);
+        elencoGiorno.set(nome, [a.quantita]);
       }
     });
   });
@@ -798,9 +1033,25 @@ function renderGiorno() {
     pasto.alimenti.forEach(a => {
       const item = document.createElement("div");
       item.className = "food-item";
+
+      const isRicetta = a.tipo === "ricetta";
+      const ricetta = isRicetta ? trovaRicetta(utente, a.ricettaId) : null;
+      const nomeVisualizzato = isRicetta ? `🍳 ${ricetta ? ricetta.nome : a.ricettaId}` : a.alimento;
+      const valutazione = isRicetta && ricetta ? valutaRicetta(ricetta, utente.rangePerPasto) : null;
+      const warningInline = valutazione && valutazione.fuoriTarget ? `<span class="food-item-warning-icon" title="Ricetta fuori target">⚠️</span>` : "";
+
+      const ingredientiHtml = isRicetta && ricetta ? `
+            <div class="recipe-ref-ingredients">
+              <span><b>Contiene:</b></span>
+              ${ricetta.ingredienti.map(ing => `<span>${ing.alimento} — ${ing.quantita}</span>`).join("")}
+            </div>
+            ${valutazione && valutazione.fuoriTarget ? `<div class="warning-badge">⚠️ Fuori target: ${valutazione.motivi.join("; ")}</div>` : ""}
+            <a class="recipe-ref-link" data-ricetta-id="${ricetta.id}">Vedi ricetta completa (con preparazione) →</a>
+      ` : "";
+
       item.innerHTML = `
         <div class="food-item-row">
-          <span class="food-item-name">${a.alimento}</span>
+          <span class="food-item-name">${nomeVisualizzato}${warningInline}</span>
           <span class="food-item-right">${a.quantita}<span class="food-item-toggle-icon">▾</span></span>
         </div>
         <div class="food-item-details">
@@ -810,6 +1061,7 @@ function renderGiorno() {
             <span class="v-f">Grassi <b>${fmt(a.grassi)} g</b></span>
             <span class="v-c">Carboidrati <b>${fmt(a.carboidrati)} g</b></span>
           </div>
+          ${ingredientiHtml}
         </div>
       `;
       item.querySelector(".food-item-row").addEventListener("click", () => {
@@ -817,6 +1069,13 @@ function renderGiorno() {
         const isExpanded = item.classList.toggle("expanded");
         details.style.maxHeight = isExpanded ? details.scrollHeight + "px" : "0px";
       });
+      const refLink = item.querySelector(".recipe-ref-link");
+      if (refLink) {
+        refLink.addEventListener("click", (e) => {
+          e.stopPropagation();
+          apriRicettaDettaglio(refLink.dataset.ricettaId);
+        });
+      }
       list.appendChild(item);
     });
 
@@ -861,29 +1120,147 @@ function renderSpesa() {
   });
 }
 
+function renderRicette() {
+  const utente = datiUtenti[utenteCorrente];
+  const cont = document.getElementById("contenutoRicette");
+  cont.innerHTML = "";
+
+  if (ricettaApertaId) {
+    renderRicettaDettaglio(cont, utente);
+    return;
+  }
+
+  const ricette = utente.ricette || [];
+  if (ricette.length === 0) {
+    cont.innerHTML = `<div class="empty-state">Nessuna ricetta inserita per questo utente.</div>`;
+    return;
+  }
+
+  ricette.forEach(ricetta => {
+    const valutazione = valutaRicetta(ricetta, utente.rangePerPasto);
+    const card = document.createElement("div");
+    card.className = "recipe-card";
+    card.innerHTML = `
+      <div class="recipe-card-top">
+        <span class="recipe-card-name">${ricetta.nome}</span>
+        <span class="recipe-category-badge">${ricetta.categoria}</span>
+      </div>
+      <div class="recipe-card-macros">
+        <span class="v-kcal">kcal <b>${fmt(ricetta.totale.kcal)}</b></span>
+        <span class="v-p">Proteine <b>${fmt(ricetta.totale.proteine)} g</b></span>
+        <span class="v-f">Grassi <b>${fmt(ricetta.totale.grassi)} g</b></span>
+        <span class="v-c">Carboidrati <b>${fmt(ricetta.totale.carboidrati)} g</b></span>
+      </div>
+      ${valutazione.fuoriTarget ? `<div class="warning-badge">⚠️ Fuori target: ${valutazione.motivi.join("; ")}</div>` : ""}
+    `;
+    card.addEventListener("click", () => apriRicettaDettaglio(ricetta.id));
+    cont.appendChild(card);
+  });
+}
+
+function renderRicettaDettaglio(cont, utente) {
+  const ricetta = trovaRicetta(utente, ricettaApertaId);
+  if (!ricetta) {
+    ricettaApertaId = null;
+    renderRicette();
+    return;
+  }
+  const valutazione = valutaRicetta(ricetta, utente.rangePerPasto);
+
+  const wrap = document.createElement("div");
+
+  const header = document.createElement("div");
+  header.className = "recipe-detail-header";
+  header.innerHTML = `
+    <button class="back-btn" id="backToRicette">← Torna alle ricette</button>
+    <span class="recipe-detail-title">${ricetta.nome}</span>
+    <span class="recipe-category-badge">${ricetta.categoria}</span>
+  `;
+  wrap.appendChild(header);
+
+  if (valutazione.fuoriTarget) {
+    const warn = document.createElement("div");
+    warn.className = "warning-banner";
+    warn.textContent = `⚠️ Fuori target: ${valutazione.motivi.join("; ")}`;
+    wrap.appendChild(warn);
+  }
+
+  const macros = document.createElement("div");
+  macros.className = "day-summary";
+  macros.innerHTML = `
+    <div class="day-summary-left">
+      <div class="stat stat-kcal">kcal<b>${fmt(ricetta.totale.kcal)}</b></div>
+      <div class="stat stat-p">Proteine<b>${fmt(ricetta.totale.proteine)} g</b></div>
+      <div class="stat stat-f">Grassi<b>${fmt(ricetta.totale.grassi)} g</b></div>
+      <div class="stat stat-c">Carboidrati<b>${fmt(ricetta.totale.carboidrati)} g</b></div>
+    </div>
+  `;
+  wrap.appendChild(macros);
+
+  const ingredienti = document.createElement("div");
+  ingredienti.className = "spesa-category";
+  ingredienti.innerHTML = `
+    <h2>Ingredienti</h2>
+    <table>
+      <tbody>
+        ${ricetta.ingredienti.map(ing => `<tr><td>${ing.alimento}</td><td class="num">${ing.quantita}</td></tr>`).join("")}
+      </tbody>
+    </table>
+  `;
+  wrap.appendChild(ingredienti);
+
+  const steps = document.createElement("div");
+  steps.className = "recipe-steps";
+  steps.innerHTML = `
+    <h3>Preparazione</h3>
+    <ol>
+      ${ricetta.passaggi.map(p => `<li>${p}</li>`).join("")}
+    </ol>
+  `;
+  wrap.appendChild(steps);
+
+  cont.appendChild(wrap);
+  document.getElementById("backToRicette").addEventListener("click", () => {
+    ricettaApertaId = null;
+    renderRicette();
+  });
+}
+
+function apriRicettaDettaglio(ricettaId) {
+  ricettaApertaId = ricettaId;
+  mostraVista("ricette");
+  renderRicette();
+}
+
 function mostraVista(vista) {
   vistaCorrente = vista;
   document.getElementById("vistaGiorno").style.display = vista === "giorno" ? "block" : "none";
   document.getElementById("vistaSpesa").style.display = vista === "spesa" ? "block" : "none";
+  document.getElementById("vistaRicette").style.display = vista === "ricette" ? "block" : "none";
   document.getElementById("tabGiorno").classList.toggle("active", vista === "giorno");
   document.getElementById("tabSpesa").classList.toggle("active", vista === "spesa");
+  document.getElementById("tabRicette").classList.toggle("active", vista === "ricette");
 }
 
 document.getElementById("selectUtente").addEventListener("change", (e) => {
   utenteCorrente = e.target.value;
   giornoCorrente = calcolaGiornoCorrente();
+  ricettaApertaId = null;
   renderDayTabs();
   renderGiorno();
   renderSpesa();
+  renderRicette();
 });
 
 document.getElementById("tabGiorno").addEventListener("click", () => mostraVista("giorno"));
 document.getElementById("tabSpesa").addEventListener("click", () => mostraVista("spesa"));
+document.getElementById("tabRicette").addEventListener("click", () => { ricettaApertaId = null; mostraVista("ricette"); renderRicette(); });
 
 popolaSelectUtenti();
 renderDayTabs();
 renderGiorno();
 renderSpesa();
+renderRicette();
 </script>
 
 </body>
