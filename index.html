@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Piano alimentare — Progetto Nutrizionista</title>
+<style>
+  :root {
+    --verde: #2e7d4f;
+    --verde-chiaro: #e8f5ee;
+    --arancio: #e07b39;
+    --rosso: #d9534f;
+    --grigio: #6b7280;
+    --bg: #f7f5f0;
+    --card-bg: #ffffff;
+    --testo: #2b2b2b;
+    --ombra: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--testo);
+    padding-bottom: 40px;
+  }
+  header {
+    background: linear-gradient(135deg, var(--verde) 0%, #1f5c38 100%);
+    color: white;
+    padding: 32px 24px 24px;
+    text-align: center;
+  }
+  header h1 {
+    margin: 0 0 8px;
+    font-size: 1.8rem;
+  }
+  header p {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 0.95rem;
+  }
+  .container {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 24px 16px;
+  }
+  .controls-bar {
+    background: var(--card-bg);
+    border-radius: 14px;
+    box-shadow: var(--ombra);
+    padding: 18px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+  }
+  .control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .control-group label {
+    font-size: 0.8rem;
+    color: var(--grigio);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  select {
+    border: 1.5px solid #d8d4cb;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 0.95rem;
+    background: white;
+    color: var(--testo);
+    min-width: 160px;
+  }
+  .view-tabs {
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+  }
+  .view-tab-btn {
+    border: 1.5px solid #d8d4cb;
+    background: white;
+    border-radius: 999px;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--grigio);
+    transition: all 0.15s ease;
+  }
+  .view-tab-btn.active {
+    background: var(--verde);
+    border-color: var(--verde);
+    color: white;
+  }
+  .day-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .day-tab-btn {
+    border: 1.5px solid #d8d4cb;
+    background: white;
+    border-radius: 999px;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    color: var(--grigio);
+    transition: all 0.15s ease;
+  }
+  .day-tab-btn:hover { border-color: var(--verde); }
+  .day-tab-btn.active {
+    background: var(--verde);
+    border-color: var(--verde);
+    color: white;
+  }
+  .day-summary {
+    background: var(--verde-chiaro);
+    border: 1px solid #d7ead9;
+    border-radius: 14px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+  .day-summary-left {
+    flex: 1 1 320px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    align-items: center;
+  }
+  .day-summary-left .titolo {
+    font-weight: 700;
+    color: var(--verde);
+    font-size: 1.1rem;
+    flex: 1 1 100%;
+  }
+  .stat {
+    font-size: 0.9rem;
+  }
+  .stat b { display: block; font-size: 1.15rem; }
+  .day-summary-right {
+    flex: 1 1 240px;
+    max-width: 340px;
+  }
+  .day-summary-right h3 {
+    margin: 0 0 8px;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--verde);
+  }
+  .day-summary-right ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .day-summary-right li {
+    font-size: 0.85rem;
+    color: var(--testo);
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .day-summary-right li .qta {
+    color: var(--grigio);
+    white-space: nowrap;
+    text-align: right;
+  }
+  .meal-card {
+    background: var(--card-bg);
+    border-radius: 14px;
+    box-shadow: var(--ombra);
+    margin-bottom: 18px;
+    overflow: hidden;
+  }
+  .meal-header {
+    padding: 14px 20px;
+    background: var(--verde-chiaro);
+    border-bottom: 1px solid #d7ead9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .meal-header h2 {
+    margin: 0;
+    font-size: 1.05rem;
+    color: var(--verde);
+  }
+  .meal-header .meal-kcal {
+    font-size: 0.85rem;
+    color: var(--grigio);
+    background: white;
+    padding: 4px 10px;
+    border-radius: 999px;
+  }
+  .food-item {
+    border-bottom: 1px solid #f0eee8;
+  }
+  .food-item:last-child {
+    border-bottom: none;
+  }
+  .food-item-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .food-item-row:hover {
+    background: #fafaf8;
+  }
+  .food-item-name {
+    font-weight: 500;
+  }
+  .food-item-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--grigio);
+    font-size: 0.9rem;
+    white-space: nowrap;
+  }
+  .food-item-toggle-icon {
+    display: inline-block;
+    font-size: 0.75rem;
+    transition: transform 0.15s ease;
+    color: #b9b4a8;
+  }
+  .food-item.expanded .food-item-toggle-icon {
+    transform: rotate(180deg);
+  }
+  .food-item-details {
+    display: none;
+    padding: 0 20px 12px 20px;
+    flex-wrap: wrap;
+    gap: 16px;
+    font-size: 0.82rem;
+    color: var(--grigio);
+  }
+  .food-item.expanded .food-item-details {
+    display: flex;
+  }
+  .food-item-details b {
+    color: var(--testo);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+  table th, table td {
+    text-align: left;
+    padding: 10px 20px;
+    border-bottom: 1px solid #f0eee8;
+  }
+  table th {
+    color: var(--grigio);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    font-weight: 600;
+  }
+  table tr:last-child td { border-bottom: none; }
+  td.num, th.num { text-align: right; white-space: nowrap; }
+  .spesa-category {
+    background: var(--card-bg);
+    border-radius: 14px;
+    box-shadow: var(--ombra);
+    margin-bottom: 18px;
+    overflow: hidden;
+  }
+  .spesa-category h2 {
+    margin: 0;
+    padding: 14px 20px;
+    background: var(--verde-chiaro);
+    border-bottom: 1px solid #d7ead9;
+    font-size: 1.05rem;
+    color: var(--verde);
+  }
+  .week-summary-table {
+    background: var(--card-bg);
+    border-radius: 14px;
+    box-shadow: var(--ombra);
+    margin-bottom: 18px;
+    overflow: hidden;
+  }
+  .note-box {
+    background: #fff8e6;
+    border: 1px solid #f0dca0;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 0.85rem;
+    color: #6b5a1d;
+    margin-bottom: 20px;
+  }
+  .empty-state {
+    text-align: center;
+    color: var(--grigio);
+    padding: 40px 20px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Piano alimentare</h1>
+  <p>Seleziona l'utente e il giorno per vedere cosa mangiare, oppure passa alla sezione "Spesa" per la lista della spesa settimanale.</p>
+</header>
+
+<div class="container">
+  <div class="controls-bar">
+    <div class="control-group">
+      <label for="selectUtente">Utente</label>
+      <select id="selectUtente"></select>
+    </div>
+    <div class="view-tabs">
+      <button class="view-tab-btn active" id="tabGiorno">Piano del giorno</button>
+      <button class="view-tab-btn" id="tabSpesa">Spesa settimanale</button>
+    </div>
+  </div>
+
+  <div id="vistaGiorno">
+    <div class="day-tabs" id="dayTabs"></div>
+    <div id="contenutoGiorno"></div>
+  </div>
+
+  <div id="vistaSpesa" style="display:none;">
+    <div class="note-box">
+      Lista della spesa aggregata per tutti i 7 giorni del piano settimanale. Quantità sul peso crudo degli alimenti.
+    </div>
+    <div id="contenutoSpesa"></div>
+  </div>
+</div>
+
+<script>
+/*
+ * Dati incorporati direttamente nella pagina (stesso approccio di seleziona-alimenti.html).
+ * Quando si crea/aggiorna il piano-settimanale.md di un utente, va aggiornata manualmente
+ * anche la voce corrispondente in questo oggetto "datiUtenti".
+ */
+const datiUtenti = {
+  pietro: {
+    nomeVisualizzato: "Pietro",
+    target: { kcal: 1700, proteine: 150, grassi: 55, carboidrati: 155 },
+    mediaSettimanale: { kcal: 1742, proteine: 141.5, grassi: 62.5, carboidrati: 152.5 },
+    giorni: {
+      "Lunedì": {
+        totale: { kcal: 1703, proteine: 144, grassi: 60.5, carboidrati: 142.9 },
+        pasti: [
+          { nome: "Colazione", totale: { kcal: 379, proteine: 23.7, grassi: 22.9, carboidrati: 19 }, alimenti: [
+            { alimento: "Uova", quantita: "3 (165 g)", kcal: 234, proteine: 19.5, grassi: 16.5, carboidrati: 1.5 },
+            { alimento: "Pane integrale", quantita: "30 g", kcal: 75, proteine: 2.7, grassi: 1.1, carboidrati: 13.5 },
+            { alimento: "Pomodori", quantita: "100 g", kcal: 25, proteine: 1.5, grassi: 0.3, carboidrati: 4 },
+            { alimento: "Olio EVO (cottura)", quantita: "5 g", kcal: 45, proteine: 0, grassi: 5, carboidrati: 0 }
+          ]},
+          { nome: "Pranzo", totale: { kcal: 684, proteine: 55.8, grassi: 15.3, carboidrati: 75.5 }, alimenti: [
+            { alimento: "Petto di pollo", quantita: "200 g", kcal: 220, proteine: 46, grassi: 2.4, carboidrati: 0 },
+            { alimento: "Riso integrale (crudo)", quantita: "90 g", kcal: 324, proteine: 6.8, grassi: 2.3, carboidrati: 67.5 },
+            { alimento: "Zucchine", quantita: "200 g", kcal: 50, proteine: 3, grassi: 0.6, carboidrati: 8 },
+            { alimento: "Olio EVO", quantita: "10 g", kcal: 90, proteine: 0, grassi: 10, carboidrati: 0 }
+          ]},
+          { nome: "Spuntino", totale: { kcal: 203, proteine: 19, grassi: 10.5, carboidrati: 10 }, alimenti: [
+            { alimento: "Yogurt greco", quantita: "150 g", kcal: 83, proteine: 15, grassi: 0.5, carboidrati: 6 },
+            { alimento: "Mandorle", quantita: "20 g", kcal: 120, proteine: 4, grassi: 10, carboidrati: 4 }
+          ]},
+          { nome: "Cena", totale: { kcal: 437, proteine: 45.5, grassi: 11.8, carboidrati: 38.4 }, alimenti: [
+            { alimento: "Merluzzo/nasello", quantita: "220 g", kcal: 165, proteine: 39.6, grassi: 1.1, carboidrati: 0 },
+            { alimento: "Spinaci", quantita: "150 g", kcal: 38, proteine: 2.3, grassi: 0.5, carboidrati: 6 },
+            { alimento: "Patate", quantita: "180 g", kcal: 144, proteine: 3.6, grassi: 0.2, carboidrati: 32.4 },
+            { alimento: "Olio EVO", quantita: "10 g", kcal: 90, proteine: 0, grassi: 10, carboidrati: 0 }
+          ]}
+        ]
+      },
+      "Martedì": {
+        totale: { kcal: 1824, proteine: 137.6, grassi: 68.35, carboidrati: 165.6 },
+        pasti: [
+          { nome: "Colazione", totale: { kcal: 340, proteine: 23.9, grassi: 10.9, carboidrati: 36 }, alimenti: [
+            { alimento: "Fiocchi di latte", quantita: "150 g", kcal: 147, proteine: 18, grassi: 6, carboidrati: 4.5 },
+            { alimento: "Pane integrale", quantita: "30 g", kcal: 75, proteine: 2.7, grassi: 1.1, carboidrati: 13.5 },
+            { alimento: "Pesche", quantita: "150 g", kcal: 68, proteine: 1.2, grassi: 0.3, carboidrati: 15 },
+            { alimento: "Semi (chia/lino)", quantita: "10 g", kcal: 50, proteine: 2, grassi: 3.5, carboidrati: 3 }
+          ]},
+          { nome: "Pranzo", totale: { kcal: 703, proteine: 47.4, grassi: 29.7, carboidrati: 64 }, alimenti: [
+            { alimento: "Salmone", quantita: "170 g", kcal: 340, proteine: 34, grassi: 22.1, carboidrati: 0 },
+            { alimento: "Farro (crudo)", quantita: "80 g", kcal: 268, proteine: 10.4, grassi: 2, carboidrati: 56 },
+            { alimento: "Broccoli", quantita: "200 g", kcal: 50, proteine: 3, grassi: 0.6, carboidrati: 8 },
+            { alimento: "Olio EVO", quantita: "5 g", kcal: 45, proteine: 0, grassi: 5, carboidrati: 0 }
+          ]},
+          { nome: "Spuntino", totale: { kcal: 218, proteine: 10.2, grassi: 11.3, carboidrati: 18 }, alimenti: [
+            { alimento: "Ricotta", quantita: "100 g", kcal: 150, proteine: 9, grassi: 11, carboidrati: 3 },
+            { alimento: "Mandarini", quantita: "150 g", kcal: 68, proteine: 1.2, grassi: 0.3, carboidrati: 15 }
+          ]},
+          { nome: "Cena", totale: { kcal: 563, proteine: 56.1, grassi: 16.45, carboidrati: 47.6 }, alimenti: [
+            { alimento: "Gamberi", quantita: "220 g", kcal: 187, proteine: 41.8, grassi: 2.2, carboidrati: 1.1 },
+            { alimento: "Finocchi", quantita: "150 g", kcal: 38, proteine: 2.3, grassi: 0.5, carboidrati: 6 },
+            { alimento: "Ceci (cotti)", quantita: "150 g", kcal: 248, proteine: 12, grassi: 3.75, carboidrati: 40.5 },
+            { alimento: "Olio EVO", quantita: "10 g", kcal: 90, proteine: 0, grassi: 10, carboidrati: 0 }
+          ]}
+        ]
+      },
+      "Mercoledì": {
+        totale: { kcal: 1689, proteine: 146.5, grassi: 60.6, carboidrati: 135.9 },
+        pasti: [
+          { nome: "Colazione", totale: { kcal: 406, proteine: 26.2, grassi: 23.4, carboidrati: 21.5 }, alimenti: [
+            { alimento: "Uova", quantita: "2 (110 g)", kcal: 156, proteine: 13, grassi: 11, carboidrati: 1 },
+            { alimento: "Ricotta", quantita: "100 g", kcal: 150, proteine: 9, grassi: 11, carboidrati: 3 },
+            { alimento: "Pomodori", quantita: "100 g", kcal: 25, proteine: 1.5, grassi: 0.3, carboidrati: 4 },
+            { alimento: "Pane integrale", quantita: "30 g", kcal: 75, proteine: 2.7, grassi: 1.1, carboidrati: 13.5 }
+          ]},
+          { nome: "Pranzo", totale: { kcal: 661, proteine: 62.7, grassi: 14.85, carboidrati: 67.4 }, alimenti: [
+            { alimento: "Petto di tacchino", quantita: "200 g", kcal: 210, proteine: 48, grassi: 2, carboidrati: 0 },
+            { alimento: "Pasta integrale (cruda)", quantita: "90 g", kcal: 311, proteine: 11.7, grassi: 2.25, carboidrati: 59.4 },
+            { alimento: "Melanzane", quantita: "200 g", kcal: 50, proteine: 3, grassi: 0.6, carboidrati: 8 },
+            { alimento: "Olio EVO", quantita: "10 g", kcal: 90, proteine: 0, grassi: 10, carboidrati: 0 }
+          ]},
+          { nome: "Spuntino", totale: { kcal: 173, proteine: 18, grassi: 8, carboidrati: 9 }, alimenti: [
+            { alimento: "Yogurt greco", quantita: "150 g", kcal: 83, proteine: 15, grassi: 0.5, carboidrati: 6 },
+            { alimento: "Noci", quantita: "15 g", kcal: 90, proteine: 3, grassi: 7.5, carboidrati: 3 }
+          ]},
+          { nome: "Cena", totale: { kcal: 449, proteine: 39.6, grassi: 14.35, carboidrati: 38 }, alimenti: [
+            { alimento: "Orata/branzino", quantita: "180 g", kcal: 180, proteine: 34.2, grassi: 3.6, carboidrati: 0 },
+            { alimento: "Carote", quantita: "200 g", kcal: 50, proteine: 3, grassi: 0.6, carboidrati: 8 },
+            { alimento: "Patate dolci", quantita: "150 g", kcal: 129, proteine: 2.4, grassi: 0.15, carboidrati: 30 },
+            { alimento: "Olio EVO", quantita: "10 g", kcal: 90, proteine: 0, grassi: 10, carboidrati: 0 }
+          ]}
+        ]
+      },
+      "Giovedì": {
+        totale: { kcal: 1789, proteine: 138.5, grassi: 64.4, carboidrati: 166.1 },
+        pasti: [
+          { nome: "Colazione", totale: { kcal: 338, proteine: 31.1, grassi: 15.7, carboidrati: 16.5 }, alimenti: [
+            { alimento: "Salmone affumicato", quantita: "80 g", kcal: 94, proteine: 14.6, grassi: 3.4, carboidrati: 0 },
+            { alimento: "Uova", quantita: "2 (110 g)", kcal: 156, proteine: 13, grassi: 11, carboidrati: 1 },
+            { alimento: "Pane integrale", quantita: "30 g", kcal: 75, proteine: 2.7, grassi: 1.1, carboidrati: 13.5 },
+            { alimento: "Rucola", quantita: "50 g", kcal: 13, proteine: 0.8, grassi: 0.2, carboidrati: 2 }
+          ]},
+          { nome: "Pranzo", totale: { kcal: 698, proteine: 59.7, grassi: 23.2, carboidrati: 65.6 }, alimenti: [
+            { alimento: "Tonno fresco", quantita: "180 g", kcal: 234, proteine: 45, grassi: 7.2, carboidrati: 0 },
+            { alimento: "Quinoa (cruda)", quantita: "90 g", kcal: 324, proteine: 11.7, grassi: 5.4, carboidrati: 57.6 },
+            { alimento: "Carote", quantita: "200 g", kcal: 50, proteine: 3, grassi: 0.6, carboidrati: 8 },
+            { alimento: "Olio EVO", quantita: "10 g", kcal: 90, proteine: 0, grassi: 10, carboidrati: 0 }
+          ]},
+          { nome: "Spuntino", totale: { kcal: 283, proteine: 23.1, grassi: 12.7, carboidrati: 18 }, alimenti: [
+            { alimento: "Parmigiano/Grana", quantita: "30 g", kcal: 117, proteine: 9.9, grassi: 8.4, carboidrati: 0 },
+            { alimento: "Pesche", quantita: "150 g", kcal: 68, proteine: 1.2, grassi: 0.3, carboidrati: 15 },
+            { alimento: "Fiocchi di latte", quantita: "100 g", kcal: 98, proteine: 12, grassi: 4, carboidrati: 3 }
+          ]},
+          { nome: "Cena", totale: { kcal: 470, proteine: 24.6, grassi: 12.8, carboidrati: 66 }, alimenti: [
+            { alimento: "Lenticchie (cotte)", quantita: "200 g", kcal: 230, proteine: 18, grassi: 0.8, carboidrati: 40 },
+            { alimento: "Spinaci", quantita: "200 g", kcal: 50, proteine: 3, grassi: 0.6, carboidrati: 8 },
+            { alimento: "Pane integrale", quantita: "40 g", kcal: 100, proteine: 3.6, grassi: 1.4, carboidrati: 18 },
+            { alimento: "Olio EVO", quantita: "10 g", kcal: 90, proteine: 0, grassi: 10, carboidrati: 0 }
+          ]}
+        ]
+      },
+      "Venerdì": {
+        totale: { kcal: 1706, proteine: 148.8, grassi: 61, carboidrati: 136.5 },
+        pasti: [
+          { nome: "Colazione", totale: { kcal: 334, proteine: 23.7, grassi: 17.9, carboidrati: 19 }, alimenti: [
+            { alimento: "Uova", quantita: "3 (165 g)", kcal: 234, proteine: 19.5, grassi: 16.5, carboidrati: 1.5 },
+            { alimento: "Pomodori", quantita: "100 g", kcal: 25, proteine: 1.5, grassi: 0.3, carboidrati: 4 },
+            { alimento: "Pane integrale", quantita: "30 g", kcal: 75, proteine: 2.7, grassi: 1.1, carboidrati: 13.5 }
+          ]},
+          { nome: "Pranzo", totale: { kcal: 560, proteine: 54, grassi: 13.25, carboidrati: 53 }, alimenti: [
+            { alimento: "Petto di pollo", quantita: "200 g", kcal: 220, proteine: 46, grassi: 2.4, carboidrati: 0 },
+            { alimento: "Patate", quantita: "250 g", kcal: 200, proteine: 5, grassi: 0.25, carboidrati: 45 },
+            { alimento: "Funghi", quantita: "200 g", kcal: 50, proteine: 3, grassi: 0.6, carboidrati: 8 },
+            { alimento: "Olio EVO", quantita: "10 g", kcal: 90, proteine: 0, grassi: 10, carboidrati: 0 }
+          ]},
+          { nome: "Spuntino", totale: { kcal: 237, proteine: 21, grassi: 13.5, carboidrati: 7.5 }, alimenti: [
+            { alimento: "Fiocchi di latte", quantita: "150 g", kcal: 147, proteine: 18, grassi: 6, carboidrati: 4.5 },
+            { alimento: "Mandorle", quantita: "15 g", kcal: 90, proteine: 3, grassi: 7.5, carboidrati: 3 }
+          ]},
+          { nome: "Cena", totale: { kcal: 575, proteine: 50.1, grassi: 16.35, carboidrati: 57 }, alimenti: [
+            { alimento: "Orata/branzino", quantita: "200 g", kcal: 200, proteine: 38, grassi: 4, carboidrati: 0 },
+            { alimento: "Zucchine", quantita: "200 g", kcal: 50, proteine: 3, grassi: 0.6, carboidrati: 8 },
+            { alimento: "Farro (crudo)", quantita: "70 g", kcal: 235, proteine: 9.1, grassi: 1.75, carboidrati: 49 },
+            { alimento: "Olio EVO", quantita: "10 g", kcal: 90, proteine: 0, grassi: 10, carboidrati: 0 }
+          ]}
+        ]
+      },
+      "Sabato": {
+        totale: { kcal: 1696, proteine: 141.1, grassi: 51, carboidrati: 173.5 },
+        pasti: [
+          { nome: "Colazione", totale: { kcal: 303, proteine: 25.9, grassi: 5.5, carboidrati: 39.5 }, alimenti: [
+            { alimento: "Yogurt greco", quantita: "200 g", kcal: 110, proteine: 20, grassi: 0.6, carboidrati: 8 },
+            { alimento: "Pane integrale", quantita: "30 g", kcal: 75, proteine: 2.7, grassi: 1.1, carboidrati: 13.5 },
+            { alimento: "Albicocche", quantita: "150 g", kcal: 68, proteine: 1.2, grassi: 0.3, carboidrati: 15 },
+            { alimento: "Semi (chia/lino)", quantita: "10 g", kcal: 50, proteine: 2, grassi: 3.5, carboidrati: 3 }
+          ]},
+          { nome: "Pranzo", totale: { kcal: 625, proteine: 50, grassi: 13.95, carboidrati: 76.5 }, alimenti: [
+            { alimento: "Gamberi", quantita: "200 g", kcal: 170, proteine: 38, grassi: 2, carboidrati: 1 },
+            { alimento: "Orzo (crudo)", quantita: "90 g", kcal: 315, proteine: 9, grassi: 1.35, carboidrati: 67.5 },
+            { alimento: "Rucola", quantita: "200 g", kcal: 50, proteine: 3, grassi: 0.6, carboidrati: 8 },
+            { alimento: "Olio EVO", quantita: "10 g", kcal: 90, proteine: 0, grassi: 10, carboidrati: 0 }
+          ]},
+          { nome: "Spuntino", totale: { kcal: 218, proteine: 10.2, grassi: 11.3, carboidrati: 18 }, alimenti: [
+            { alimento: "Ricotta", quantita: "100 g", kcal: 150, proteine: 9, grassi: 11, carboidrati: 3 },
+            { alimento: "Mandarini", quantita: "150 g", kcal: 68, proteine: 1.2, grassi: 0.3, carboidrati: 15 }
+          ]},
+          { nome: "Cena", totale: { kcal: 550, proteine: 55, grassi: 20.25, carboidrati: 39.5 }, alimenti: [
+            { alimento: "Petto di tacchino", quantita: "200 g", kcal: 210, proteine: 48, grassi: 2, carboidrati: 0 },
+            { alimento: "Finocchi", quantita: "200 g", kcal: 50, proteine: 3, grassi: 0.6, carboidrati: 8 },
+            { alimento: "Patate", quantita: "150 g", kcal: 120, proteine: 3, grassi: 0.15, carboidrati: 27 },
+            { alimento: "Avocado", quantita: "50 g", kcal: 80, proteine: 1, grassi: 7.5, carboidrati: 4.5 },
+            { alimento: "Olio EVO", quantita: "10 g", kcal: 90, proteine: 0, grassi: 10, carboidrati: 0 }
+          ]}
+        ]
+      },
+      "Domenica": {
+        totale: { kcal: 1788, proteine: 133.8, grassi: 71.65, carboidrati: 147.3 },
+        pasti: [
+          { nome: "Colazione", totale: { kcal: 354, proteine: 29.2, grassi: 16.4, carboidrati: 21.5 }, alimenti: [
+            { alimento: "Uova", quantita: "2 (110 g)", kcal: 156, proteine: 13, grassi: 11, carboidrati: 1 },
+            { alimento: "Fiocchi di latte", quantita: "100 g", kcal: 98, proteine: 12, grassi: 4, carboidrati: 3 },
+            { alimento: "Pomodori", quantita: "100 g", kcal: 25, proteine: 1.5, grassi: 0.3, carboidrati: 4 },
+            { alimento: "Pane integrale", quantita: "30 g", kcal: 75, proteine: 2.7, grassi: 1.1, carboidrati: 13.5 }
+          ]},
+          { nome: "Pranzo", totale: { kcal: 716, proteine: 43.4, grassi: 32.1, carboidrati: 60.8 }, alimenti: [
+            { alimento: "Salmone", quantita: "150 g", kcal: 300, proteine: 30, grassi: 19.5, carboidrati: 0 },
+            { alimento: "Pasta integrale (cruda)", quantita: "80 g", kcal: 276, proteine: 10.4, grassi: 2, carboidrati: 52.8 },
+            { alimento: "Pomodori", quantita: "200 g", kcal: 50, proteine: 3, grassi: 0.6, carboidrati: 8 },
+            { alimento: "Olio EVO", quantita: "10 g", kcal: 90, proteine: 0, grassi: 10, carboidrati: 0 }
+          ]},
+          { nome: "Spuntino", totale: { kcal: 195, proteine: 13.8, grassi: 7.9, carboidrati: 16.5 }, alimenti: [
+            { alimento: "Parmigiano/Grana", quantita: "20 g", kcal: 78, proteine: 6.6, grassi: 5.6, carboidrati: 0 },
+            { alimento: "Pesche", quantita: "150 g", kcal: 68, proteine: 1.2, grassi: 0.3, carboidrati: 15 },
+            { alimento: "Fiocchi di latte", quantita: "50 g", kcal: 49, proteine: 6, grassi: 2, carboidrati: 1.5 }
+          ]},
+          { nome: "Cena", totale: { kcal: 523, proteine: 47.4, grassi: 15.25, carboidrati: 48.5 }, alimenti: [
+            { alimento: "Merluzzo/nasello", quantita: "180 g", kcal: 135, proteine: 32.4, grassi: 0.9, carboidrati: 0 },
+            { alimento: "Carote", quantita: "200 g", kcal: 50, proteine: 3, grassi: 0.6, carboidrati: 8 },
+            { alimento: "Ceci (cotti)", quantita: "150 g", kcal: 248, proteine: 12, grassi: 3.75, carboidrati: 40.5 },
+            { alimento: "Olio EVO", quantita: "10 g", kcal: 90, proteine: 0, grassi: 10, carboidrati: 0 }
+          ]}
+        ]
+      }
+    },
+    spesa: {
+      "Proteine animali": [
+        { alimento: "Uova", quantita: "550 g (~10 uova)" },
+        { alimento: "Petto di pollo", quantita: "400 g" },
+        { alimento: "Petto di tacchino", quantita: "400 g" },
+        { alimento: "Salmone", quantita: "320 g" },
+        { alimento: "Salmone affumicato", quantita: "80 g" },
+        { alimento: "Tonno fresco", quantita: "180 g" },
+        { alimento: "Merluzzo/nasello", quantita: "400 g" },
+        { alimento: "Orata/branzino", quantita: "380 g" },
+        { alimento: "Gamberi", quantita: "420 g" },
+        { alimento: "Yogurt greco", quantita: "700 g" },
+        { alimento: "Fiocchi di latte", quantita: "550 g" },
+        { alimento: "Ricotta", quantita: "300 g" },
+        { alimento: "Parmigiano/Grana", quantita: "50 g" }
+      ],
+      "Proteine vegetali / legumi": [
+        { alimento: "Ceci (cotti)", quantita: "300 g" },
+        { alimento: "Lenticchie (cotte)", quantita: "200 g" }
+      ],
+      "Carboidrati": [
+        { alimento: "Riso integrale (crudo)", quantita: "90 g" },
+        { alimento: "Farro (crudo)", quantita: "150 g" },
+        { alimento: "Pasta integrale (cruda)", quantita: "170 g" },
+        { alimento: "Quinoa (cruda)", quantita: "90 g" },
+        { alimento: "Orzo (crudo)", quantita: "90 g" },
+        { alimento: "Pane integrale", quantita: "190 g" },
+        { alimento: "Patate", quantita: "580 g" },
+        { alimento: "Patate dolci", quantita: "150 g" }
+      ],
+      "Verdura": [
+        { alimento: "Pomodori", quantita: "600 g" },
+        { alimento: "Zucchine", quantita: "400 g" },
+        { alimento: "Spinaci", quantita: "350 g" },
+        { alimento: "Broccoli", quantita: "200 g" },
+        { alimento: "Finocchi", quantita: "350 g" },
+        { alimento: "Melanzane", quantita: "200 g" },
+        { alimento: "Carote", quantita: "600 g" },
+        { alimento: "Funghi", quantita: "200 g" },
+        { alimento: "Rucola", quantita: "250 g" }
+      ],
+      "Frutta": [
+        { alimento: "Pesche", quantita: "450 g" },
+        { alimento: "Albicocche", quantita: "300 g" },
+        { alimento: "Mandarini", quantita: "300 g" }
+      ],
+      "Grassi e condimenti": [
+        { alimento: "Olio extravergine d'oliva", quantita: "140 g (~14 cucchiai)" },
+        { alimento: "Mandorle/noci", quantita: "50 g" },
+        { alimento: "Semi (chia/lino)", quantita: "20 g" },
+        { alimento: "Avocado", quantita: "50 g" }
+      ]
+    }
+  }
+};
+
+const ORDINE_GIORNI = ["Lunedì","Martedì","Mercoledì","Giovedì","Venerdì","Sabato","Domenica"];
+const ORA_CAMBIO_GIORNO = 21; // dopo le 21:00 si passa già al piano del giorno dopo
+
+function calcolaGiornoCorrente() {
+  const ora = new Date();
+  let giornoSettimana = ora.getDay(); // 0 = domenica, 1 = lunedì, ... 6 = sabato
+  if (ora.getHours() >= ORA_CAMBIO_GIORNO) {
+    giornoSettimana = (giornoSettimana + 1) % 7;
+  }
+  const indice = (giornoSettimana + 6) % 7; // 0 = lunedì ... 6 = domenica, come in ORDINE_GIORNI
+  return ORDINE_GIORNI[indice];
+}
+
+let utenteCorrente = Object.keys(datiUtenti)[0];
+let giornoCorrente = calcolaGiornoCorrente();
+let vistaCorrente = "giorno";
+
+function fmt(n) {
+  return (Math.round(n * 10) / 10).toString().replace(".", ",");
+}
+
+function popolaSelectUtenti() {
+  const select = document.getElementById("selectUtente");
+  select.innerHTML = "";
+  Object.keys(datiUtenti).forEach(key => {
+    const opt = document.createElement("option");
+    opt.value = key;
+    opt.textContent = datiUtenti[key].nomeVisualizzato;
+    select.appendChild(opt);
+  });
+  select.value = utenteCorrente;
+}
+
+function renderDayTabs() {
+  const wrap = document.getElementById("dayTabs");
+  wrap.innerHTML = "";
+  ORDINE_GIORNI.forEach(giorno => {
+    const btn = document.createElement("button");
+    btn.className = "day-tab-btn" + (giorno === giornoCorrente ? " active" : "");
+    btn.textContent = giorno;
+    btn.addEventListener("click", () => {
+      giornoCorrente = giorno;
+      renderDayTabs();
+      renderGiorno();
+    });
+    wrap.appendChild(btn);
+  });
+}
+
+function renderGiorno() {
+  const utente = datiUtenti[utenteCorrente];
+  const cont = document.getElementById("contenutoGiorno");
+  cont.innerHTML = "";
+
+  const giorno = utente.giorni[giornoCorrente];
+  if (!giorno) {
+    cont.innerHTML = `<div class="empty-state">Nessun piano disponibile per questo giorno.</div>`;
+    return;
+  }
+
+  const elencoGiorno = new Map();
+  giorno.pasti.forEach(pasto => {
+    pasto.alimenti.forEach(a => {
+      if (elencoGiorno.has(a.alimento)) {
+        elencoGiorno.get(a.alimento).push(a.quantita);
+      } else {
+        elencoGiorno.set(a.alimento, [a.quantita]);
+      }
+    });
+  });
+
+  const summary = document.createElement("div");
+  summary.className = "day-summary";
+  summary.innerHTML = `
+    <div class="day-summary-left">
+      <div class="titolo">${giornoCorrente} — Totale giornata</div>
+      <div class="stat">kcal<b>${fmt(giorno.totale.kcal)}</b></div>
+      <div class="stat">Proteine<b>${fmt(giorno.totale.proteine)} g</b></div>
+      <div class="stat">Grassi<b>${fmt(giorno.totale.grassi)} g</b></div>
+      <div class="stat">Carboidrati<b>${fmt(giorno.totale.carboidrati)} g</b></div>
+    </div>
+    <div class="day-summary-right">
+      <h3>Alimenti della giornata</h3>
+      <ul>
+        ${Array.from(elencoGiorno.entries()).map(([alimento, quantita]) => `
+          <li><span>${alimento}</span><span class="qta">${quantita.join(" + ")}</span></li>
+        `).join("")}
+      </ul>
+    </div>
+  `;
+  cont.appendChild(summary);
+
+  giorno.pasti.forEach(pasto => {
+    const card = document.createElement("div");
+    card.className = "meal-card";
+
+    const header = document.createElement("div");
+    header.className = "meal-header";
+    header.innerHTML = `<h2>${pasto.nome}</h2><span class="meal-kcal">${fmt(pasto.totale.kcal)} kcal · P ${fmt(pasto.totale.proteine)} g · G ${fmt(pasto.totale.grassi)} g · C ${fmt(pasto.totale.carboidrati)} g</span>`;
+    card.appendChild(header);
+
+    const list = document.createElement("div");
+    list.className = "food-list";
+
+    pasto.alimenti.forEach(a => {
+      const item = document.createElement("div");
+      item.className = "food-item";
+      item.innerHTML = `
+        <div class="food-item-row">
+          <span class="food-item-name">${a.alimento}</span>
+          <span class="food-item-right">${a.quantita}<span class="food-item-toggle-icon">▾</span></span>
+        </div>
+        <div class="food-item-details">
+          <span>kcal <b>${fmt(a.kcal)}</b></span>
+          <span>Proteine <b>${fmt(a.proteine)} g</b></span>
+          <span>Grassi <b>${fmt(a.grassi)} g</b></span>
+          <span>Carboidrati <b>${fmt(a.carboidrati)} g</b></span>
+        </div>
+      `;
+      item.querySelector(".food-item-row").addEventListener("click", () => {
+        item.classList.toggle("expanded");
+      });
+      list.appendChild(item);
+    });
+
+    card.appendChild(list);
+    cont.appendChild(card);
+  });
+}
+
+function renderSpesa() {
+  const utente = datiUtenti[utenteCorrente];
+  const cont = document.getElementById("contenutoSpesa");
+  cont.innerHTML = "";
+
+  const summaryTable = document.createElement("div");
+  summaryTable.className = "week-summary-table";
+  summaryTable.innerHTML = `
+    <h2 style="margin:0;padding:14px 20px;background:var(--verde-chiaro);border-bottom:1px solid #d7ead9;font-size:1.05rem;color:var(--verde);">Media settimanale vs target</h2>
+    <table>
+      <thead><tr><th></th><th class="num">kcal</th><th class="num">Proteine</th><th class="num">Grassi</th><th class="num">Carboidrati</th></tr></thead>
+      <tbody>
+        <tr><td>Media piano</td><td class="num">${fmt(utente.mediaSettimanale.kcal)}</td><td class="num">${fmt(utente.mediaSettimanale.proteine)} g</td><td class="num">${fmt(utente.mediaSettimanale.grassi)} g</td><td class="num">${fmt(utente.mediaSettimanale.carboidrati)} g</td></tr>
+        <tr><td>Target</td><td class="num">${fmt(utente.target.kcal)}</td><td class="num">${fmt(utente.target.proteine)} g</td><td class="num">${fmt(utente.target.grassi)} g</td><td class="num">${fmt(utente.target.carboidrati)} g</td></tr>
+      </tbody>
+    </table>
+  `;
+  cont.appendChild(summaryTable);
+
+  Object.keys(utente.spesa).forEach(categoria => {
+    const div = document.createElement("div");
+    div.className = "spesa-category";
+    div.innerHTML = `
+      <h2>${categoria}</h2>
+      <table>
+        <tbody>
+          ${utente.spesa[categoria].map(item => `
+            <tr><td>${item.alimento}</td><td class="num">${item.quantita}</td></tr>
+          `).join("")}
+        </tbody>
+      </table>
+    `;
+    cont.appendChild(div);
+  });
+}
+
+function mostraVista(vista) {
+  vistaCorrente = vista;
+  document.getElementById("vistaGiorno").style.display = vista === "giorno" ? "block" : "none";
+  document.getElementById("vistaSpesa").style.display = vista === "spesa" ? "block" : "none";
+  document.getElementById("tabGiorno").classList.toggle("active", vista === "giorno");
+  document.getElementById("tabSpesa").classList.toggle("active", vista === "spesa");
+}
+
+document.getElementById("selectUtente").addEventListener("change", (e) => {
+  utenteCorrente = e.target.value;
+  giornoCorrente = calcolaGiornoCorrente();
+  renderDayTabs();
+  renderGiorno();
+  renderSpesa();
+});
+
+document.getElementById("tabGiorno").addEventListener("click", () => mostraVista("giorno"));
+document.getElementById("tabSpesa").addEventListener("click", () => mostraVista("spesa"));
+
+popolaSelectUtenti();
+renderDayTabs();
+renderGiorno();
+renderSpesa();
+</script>
+
+</body>
+</html>
