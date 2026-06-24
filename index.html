@@ -692,7 +692,29 @@ const datiUtenti = {
       "Spuntino": { min: 150, max: 300 },
       "Cena": { min: 400, max: 600 }
     },
-    ricette: [],
+    ricette: [
+      {
+        id: "bresaola-rucola-grana",
+        nome: "Bresaola, rucola e grana",
+        categoria: "Pranzo",
+        totale: { kcal: 520, proteine: 51.7, grassi: 21.2, carboidrati: 30.2 },
+        ingredienti: [
+          { alimento: "Bresaola", quantita: "120 g" },
+          { alimento: "Rucola", quantita: "80 g" },
+          { alimento: "Grana (scaglie)", quantita: "20 g" },
+          { alimento: "Olio EVO", quantita: "10 g" },
+          { alimento: "Pane integrale", quantita: "60 g" },
+          { alimento: "Sale", quantita: "q.b." }
+        ],
+        passaggi: [
+          "Disporre la rucola come base su un piatto.",
+          "Adagiare le fette di bresaola sopra la rucola.",
+          "Completare con le scaglie di grana.",
+          "Condire con olio EVO e un pizzico di sale.",
+          "Servire con il pane integrale a parte (anche leggermente tostato)."
+        ]
+      }
+    ],
     giorni: {
       "Lunedì": {
         totale: { kcal: 1703, proteine: 144, grassi: 60.5, carboidrati: 142.9 },
